@@ -7,7 +7,8 @@ var SystemConstants = require('./systems/system-constants');
 var UserActionContants = require('./actions/user-actions-constants');
 var UserTools = require('./actions/user-tools');
 
-var SystemRenderer = require('./renderers/system');
+var WinScreen = require('./renderers/win-screen');
+var SystemsRenderer = require('./renderers/systems');
 
 var SystemScrambler = require('./language/system-scrambler');
 
@@ -20,6 +21,7 @@ var Clicker = React.createClass({
 		return {
 			systemsUndiscovered: [...SystemConstants.ALL_SYSTEMS],
 			systemsDiscovered: [],
+			systemsActive: [],
 			lastKey: 1,
 			gameTimerInterval: gameTimerInterval,
 			userAction: UserActionContants.NOTHING
@@ -76,23 +78,46 @@ var Clicker = React.createClass({
 			});
 		}
 	},
-
-	decodeAllSystems: function() {
-		for (var system of this.state.systemsDiscovered) {
-			this.decodeSystemName(system);
-		}
-	},
-	fullyUnscrambleAllSystems: function() {
-		for (var system of this.state.systemsDiscovered) {
-			this.fullyUnscrambleSystemName(system);
-		}
-	},
 	setUserAction: function(userAction) {
 		this.setState((previousState, currentProps) => {
 			return {
 				userAction: userAction
 			};
 		});
+	},
+	activateSystem: function(system) {
+		if (this.state.systemsActive.indexOf(system) < 0) {
+			this.setState((previousState, currentProps) => {
+				return {
+					systemsActive: [...previousState.systemsActive, system],
+				};
+			});
+		}
+	},
+	deactivateSystem: function(system) {
+		if (this.state.systemsActive.indexOf(system) > -1) {
+			this.setState((previousState, currentProps) => {
+				return {
+					systemsActive: [
+						...previousState.systemsActive.slice(0, previousState.systemsActive.indexOf(system)),
+						...previousState.systemsActive.slice(previousState.systemsActive.indexOf(system) + 1)
+					]
+				};
+			});
+		}
+	},
+
+	// debug functions
+	fullyUnscrambleAllSystems: function() {
+		for (var system of this.state.systemsDiscovered) {
+			this.fullyUnscrambleSystemName(system);
+		}
+	},
+
+	decodeAllSystems: function() {
+		for (var system of this.state.systemsDiscovered) {
+			this.decodeSystemName(system);
+		}
 	},
 	attemptToDiscoverNewSystem: function() {
 		if (this.state.systemsDiscovered.length >= SystemConstants.ALL_SYSTEMS.length) {
@@ -106,6 +131,7 @@ var Clicker = React.createClass({
 			console.log("Failed to discover new system");
 		}
 	},
+
 	tickUserAction: function() {
 		if (this.state.userAction == UserActionContants.DISCOVER_SYSTEMS) {
 			this.attemptToDiscoverNewSystem();
@@ -123,11 +149,8 @@ var Clicker = React.createClass({
         	<h1>Clicker</h1>
 			<DebugTools addSystem={this.discoverNewSystem} decodeAllSystems={this.decodeAllSystems} setUserAction={this.setUserAction} fullyUnscrambleAllSystems={this.fullyUnscrambleAllSystems} />
 			<UserTools setUserAction={this.setUserAction} userAction={this.state.userAction} />
-			{this.state.systemsDiscovered.map(system => {
-				return <div key={system.key}>
-					<SystemRenderer>{system}</SystemRenderer>
-				</div>;
-			})}
+			<WinScreen activeSystems={this.state.systemsActive} />
+			<SystemsRenderer activeSystems={this.state.systemsActive} activateSystem={this.activateSystem} deactivateSystem={this.deactivateSystem}>{this.state.systemsDiscovered}</SystemsRenderer>
 		</div>;
 	}
 });
