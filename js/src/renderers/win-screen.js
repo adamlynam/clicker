@@ -32,7 +32,7 @@ module.exports = React.createClass({
             left: '10%',
             width: '60%',
             padding: '10%',
-            backgroundColor: '#333',
+            backgroundColor: '#333333',
             opacity: '1.0',
             color: '#ffffff',
             fontSize: '8em',

@@ -15,17 +15,30 @@ module.exports = React.createClass({
     },
 
 	render: function() {
-		return <div>
-            <h2>User Panel</h2>
-            <label>
+        var userPanelCss = {
+			float: 'left',
+            width: '50%',
+        };
+        var userOptionCss = {
+			float: 'left',
+			margin: '5px',
+			padding: '10px',
+			width: '200px',
+			backgroundColor: '#eeeeee',
+			border: '3px solid #000000',
+			cursor: 'pointer',
+			textAlign: 'center',
+        };
+		return <div style={userPanelCss}>
+            <label style={userOptionCss}>
                 <input name="current-action" type="radio" onChange={this.setUserActionToNothing} checked={this.props.userAction == UserActionContants.NOTHING ? true : null} />
                 <span>Do Nothing</span>
             </label>
-            <label>
-                <input name="current-action" type="radio" onChange={this.setUserActionToDiscoverSystems} checked={this.props.userAction == UserActionContants.DISCOVER_SYSTEMS ? true : null} />
+            <label style={userOptionCss}>
+                <input name="current-action" type="radio" onChange={this.setUserActionToDiscoverSystems} checked={this.props.userAction == UserActionContants.DISCOVER_SYSTEMS ? true : null} disabled={this.props.allSystemsDiscovered} readOnly={this.props.allSystemsDiscovered} />
                 <span>Discover Systems</span>
             </label>
-            <label>
+            <label style={userOptionCss}>
                 <input name="current-action" type="radio" onChange={this.setUserActionToLearnShipLanguage} checked={this.props.userAction == UserActionContants.LEARN_SHIP_LANGUAGE ? true : null} />
                 <span>Learn Language</span>
             </label>

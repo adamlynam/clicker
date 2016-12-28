@@ -119,16 +119,15 @@ var Clicker = React.createClass({
 			this.decodeSystemName(system);
 		}
 	},
+	allSystemsDiscovered: function() {
+		return this.state.systemsDiscovered.length >= SystemConstants.ALL_SYSTEMS.length;
+	},
 	attemptToDiscoverNewSystem: function() {
-		if (this.state.systemsDiscovered.length >= SystemConstants.ALL_SYSTEMS.length) {
-			console.log("No systems remain undiscovered");
+		if (this.allSystemsDiscovered()) {
+			this.setUserAction(UserActionContants.NOTHING);
 		}
 		else if (Math.random() < SystemConstants.SYSTEM_DISCOVERY_CHANCE) {
-			console.log("Discovered new system");
 			this.discoverNewSystem();
-		}
-		else {
-			console.log("Failed to discover new system");
 		}
 	},
 
@@ -148,7 +147,7 @@ var Clicker = React.createClass({
 		return <div>
         	<h1>Clicker</h1>
 			<DebugTools addSystem={this.discoverNewSystem} decodeAllSystems={this.decodeAllSystems} setUserAction={this.setUserAction} fullyUnscrambleAllSystems={this.fullyUnscrambleAllSystems} />
-			<UserTools setUserAction={this.setUserAction} userAction={this.state.userAction} />
+			<UserTools userAction={this.state.userAction} setUserAction={this.setUserAction} allSystemsDiscovered={this.allSystemsDiscovered()} />
 			<WinScreen activeSystems={this.state.systemsActive} />
 			<SystemsRenderer activeSystems={this.state.systemsActive} activateSystem={this.activateSystem} deactivateSystem={this.deactivateSystem}>{this.state.systemsDiscovered}</SystemsRenderer>
 		</div>;

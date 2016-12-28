@@ -16,6 +16,7 @@ module.exports = React.createClass({
 
 	render: function() {
 		var systemsCss = {
+			float: 'left',
 			width: '50%',
 		};
 		return <div style={systemsCss}>{this.props.children.map(system => {
