@@ -113,6 +113,9 @@ var Clicker = React.createClass({
 			this.fullyUnscrambleSystemName(system);
 		}
 	},
+	isDebugMode: function() {
+		return window.location.href.indexOf("debug") !== -1;
+	},
 
 	decodeAllSystems: function() {
 		for (var system of this.state.systemsDiscovered) {
@@ -145,8 +148,7 @@ var Clicker = React.createClass({
 
 	render: function() {
 		return <div>
-        	<h1>Clicker</h1>
-			<DebugTools addSystem={this.discoverNewSystem} decodeAllSystems={this.decodeAllSystems} setUserAction={this.setUserAction} fullyUnscrambleAllSystems={this.fullyUnscrambleAllSystems} />
+			{this.isDebugMode() && <DebugTools addSystem={this.discoverNewSystem} decodeAllSystems={this.decodeAllSystems} setUserAction={this.setUserAction} fullyUnscrambleAllSystems={this.fullyUnscrambleAllSystems} />}
 			<UserTools userAction={this.state.userAction} setUserAction={this.setUserAction} allSystemsDiscovered={this.allSystemsDiscovered()} />
 			<WinScreen activeSystems={this.state.systemsActive} />
 			<SystemsRenderer activeSystems={this.state.systemsActive} activateSystem={this.activateSystem} deactivateSystem={this.deactivateSystem}>{this.state.systemsDiscovered}</SystemsRenderer>
