@@ -4,7 +4,11 @@ var ReactDOM = require('react-dom');
 module.exports = React.createClass({
 	render: function() {
 		var nameCss = {
-			display: 'inline'
+			display: 'inline',
+			position: 'absolute',
+			top: '0',
+			left: '0',
+			width: '100%',
 		}
 		var letters = this.props.children.name.split('');
 		return <p style={nameCss}>{letters.map((letter, index) => {

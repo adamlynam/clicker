@@ -1,7 +1,7 @@
 var React = require('react');
 var ReactDOM = require('react-dom');
 
-var UserActionContants = require('./user-actions-constants');
+var UserActionContants = require('../../actions/user-actions-constants');
 
 module.exports = React.createClass({
     setUserActionToNothing: function(object) {
@@ -10,15 +10,17 @@ module.exports = React.createClass({
     setUserActionToDiscoverSystems: function(object) {
         this.props.setUserAction(UserActionContants.DISCOVER_SYSTEMS);
     },
+    setUserActionToRepairSystems: function(object) {
+        this.props.setUserAction(UserActionContants.REPAIR_SYSTEMS);
+    },
     setUserActionToLearnShipLanguage: function(object) {
         this.props.setUserAction(UserActionContants.LEARN_SHIP_LANGUAGE);
     },
+    setUserActionToGeneratePower:  function(object) {
+        this.props.setUserAction(UserActionContants.GENERATE_POWER);
+    },
 
 	render: function() {
-        var userPanelCss = {
-			float: 'left',
-            width: '50%',
-        };
         var userOptionCss = {
 			float: 'left',
 			margin: '5px',
@@ -29,7 +31,7 @@ module.exports = React.createClass({
 			cursor: 'pointer',
 			textAlign: 'center',
         };
-		return <div style={userPanelCss}>
+		return <div>
             <label style={userOptionCss}>
                 <input name="current-action" type="radio" onChange={this.setUserActionToNothing} checked={this.props.userAction == UserActionContants.NOTHING ? true : null} />
                 <span>Do Nothing</span>
@@ -39,8 +41,16 @@ module.exports = React.createClass({
                 <span>Discover Systems</span>
             </label>
             <label style={userOptionCss}>
+                <input name="current-action" type="radio" onChange={this.setUserActionToRepairSystems} checked={this.props.userAction == UserActionContants.REPAIR_SYSTEMS ? true : null} />
+                <span>Repair Systems</span>
+            </label>
+            <label style={userOptionCss}>
                 <input name="current-action" type="radio" onChange={this.setUserActionToLearnShipLanguage} checked={this.props.userAction == UserActionContants.LEARN_SHIP_LANGUAGE ? true : null} />
                 <span>Learn Language</span>
+            </label>
+            <label style={userOptionCss}>
+                <input name="current-action" type="radio" onChange={this.setUserActionToGeneratePower} checked={this.props.userAction == UserActionContants.GENERATE_POWER ? true : null} disabled={this.props.atMaxPower} readOnly={this.props.atMaxPower} />
+                <span>Generate Power</span>
             </label>
 		</div>;
 	}

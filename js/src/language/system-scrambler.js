@@ -13,10 +13,10 @@ function generateScrambledName(name) {
 
 module.exports = {
     scramble: function(system) {
-    	return {
+        return Object.assign(Object.assign({}, system), {
             name: generateScrambledName(system.name),
             unscrambledName: system.name
-        };
+        });
     },
     decodeStep: function(system) {
         var decodedName = "";

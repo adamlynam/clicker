@@ -6,8 +6,8 @@ var SystemConstants = require('../systems/system-constants');
 module.exports = React.createClass({
     checkForWin: function() {
         for (var winningSystem of SystemConstants.WINNING_SYSTEMS) {
-            if (!this.props.activeSystems.find(activeSystem => {
-                return activeSystem.unscrambledName == winningSystem;
+            if (!this.props.systemsDiscovered.find(discoveredSystem => {
+                return discoveredSystem.damage >= 1 && discoveredSystem.unscrambledName == winningSystem;
             })) {
                 return false;
             }

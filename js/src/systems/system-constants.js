@@ -7,6 +7,7 @@ module.exports = {
         "FTL Drive",
         "Main Thrusters",
         "Auxiliary Power",
+        "Power Conduits",
         "Manuvering Thrusters",
         "Weapons",
         "Shields",
@@ -22,6 +23,7 @@ module.exports = {
         "Teleporter",
         "Tractor Beam",
         "Door Control",
+        "Universal Translator",
     ],
     WINNING_SYSTEMS: [
         "Main Power",
@@ -33,5 +35,6 @@ module.exports = {
         "Long Range Scanners",
     ],
     // decimal percentage per user tick (e.g. percentage / 100)
-    SYSTEM_DISCOVERY_CHANCE: 0.1
+    SYSTEM_DISCOVERY_CHANCE: 0.1,
+    MAX_POWER: 100
 }

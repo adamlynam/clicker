@@ -4,9 +4,9 @@ var ReactDOM = require('react-dom');
 var SystemRenderer = require('./system');
 
 module.exports = React.createClass({
-	isActive(system) {
-		for (var activeSystem of this.props.activeSystems) {
-			if (activeSystem.unscrambledName == system.unscrambledName) {
+	isSelected(system) {
+		for (var selectedSystem of this.props.systemsSelected) {
+			if (selectedSystem.unscrambledName == system.unscrambledName) {
 				return true;
 			}
 		}
@@ -20,7 +20,7 @@ module.exports = React.createClass({
 			width: '50%',
 		};
 		return <div style={systemsCss}>{this.props.children.map(system => {
-		    return <SystemRenderer isActive={this.isActive(system)} activateSystem={this.props.activateSystem} deactivateSystem={this.props.deactivateSystem} key={system.key}>{system}</SystemRenderer>
+		    return <SystemRenderer isSelected={this.isSelected(system)} selectSystem={this.props.selectSystem} deselectSystem={this.props.deselectSystem} key={system.key}>{system}</SystemRenderer>
 		})}</div>
 	}
 });
