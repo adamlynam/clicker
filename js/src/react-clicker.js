@@ -86,7 +86,10 @@ var Clicker = React.createClass({
 		});
 	},
 	activateSystem: function(system) {
-		if (this.state.systemsActive.indexOf(system) < 0) {
+		var activeSystemIndex = this.state.systemsActive.findIndex(activeSystem => {
+			return activeSystem.unscrambledName == system.unscrambledName;
+		});
+		if (activeSystemIndex < 0) {
 			this.setState((previousState, currentProps) => {
 				return {
 					systemsActive: [...previousState.systemsActive, system],
@@ -95,12 +98,15 @@ var Clicker = React.createClass({
 		}
 	},
 	deactivateSystem: function(system) {
-		if (this.state.systemsActive.indexOf(system) > -1) {
+		var activeSystemIndex = this.state.systemsActive.findIndex(activeSystem => {
+			return activeSystem.unscrambledName == system.unscrambledName;
+		});
+		if (activeSystemIndex > -1) {
 			this.setState((previousState, currentProps) => {
 				return {
 					systemsActive: [
-						...previousState.systemsActive.slice(0, previousState.systemsActive.indexOf(system)),
-						...previousState.systemsActive.slice(previousState.systemsActive.indexOf(system) + 1)
+						...previousState.systemsActive.slice(0, activeSystemIndex),
+						...previousState.systemsActive.slice(activeSystemIndex + 1)
 					]
 				};
 			});
