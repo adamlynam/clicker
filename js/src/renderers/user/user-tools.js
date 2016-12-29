@@ -41,7 +41,7 @@ module.exports = React.createClass({
                 <span>Discover Systems</span>
             </label>
             <label style={userOptionCss}>
-                <input name="current-action" type="radio" onChange={this.setUserActionToRepairSystems} checked={this.props.userAction == UserActionContants.REPAIR_SYSTEMS ? true : null} />
+                <input name="current-action" type="radio" onChange={this.setUserActionToRepairSystems} checked={this.props.userAction == UserActionContants.REPAIR_SYSTEMS ? true : null} disabled={this.props.atZeroPower} readOnly={this.props.atZeroPower} />
                 <span>Repair Systems</span>
             </label>
             <label style={userOptionCss}>

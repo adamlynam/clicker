@@ -20,7 +20,7 @@ module.exports = React.createClass({
 			backgroundImage: 'url(img/tiling_power.png)',
 		}
 		return <div style={statsCss}>
-			<h2></h2>
+			<h2>Resources</h2>
             <div style={progressBar}>
 				<div style={chargeCss} />
 			</div>

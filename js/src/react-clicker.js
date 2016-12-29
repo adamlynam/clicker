@@ -19,6 +19,9 @@ var Clicker = React.createClass({
 		}, 500);
 
 		return {
+			logMessages: [
+				"You find yourself on spaceship, far from home.",
+			],
 			systemsUndiscovered: [...SystemConstants.ALL_SYSTEMS],
 			systemsDiscovered: [],
 			systemsSelected: [],
@@ -49,6 +52,7 @@ var Clicker = React.createClass({
 				lastKey: newKey
 			};
 		});
+		this.addLogMessage("You have discovered " + scrambledSystem.name + ", a new ship system.");
 	},
 	decodeSystemName: function(system) {
 		if (this.state.systemsDiscovered.indexOf(system) > -1) {
@@ -143,6 +147,13 @@ var Clicker = React.createClass({
 			});
 		}
 	},
+	addLogMessage: function(message) {
+		this.setState((previousState, currentProps) => {
+			return {
+				logMessages: [...previousState.logMessages, message],
+			};
+		});
+	},
 
 	// debug functions
 	fullyUnscrambleAllSystems: function() {
@@ -165,6 +176,9 @@ var Clicker = React.createClass({
 	atMaxPower: function() {
 		return this.state.availablePower >= SystemConstants.MAX_POWER;
 	},
+	atZeroPower: function() {
+		return this.state.availablePower <= 0;
+	},
 	attemptToDiscoverNewSystem: function() {
 		if (Math.random() < SystemConstants.SYSTEM_DISCOVERY_CHANCE) {
 			this.discoverNewSystem();
@@ -179,6 +193,7 @@ var Clicker = React.createClass({
 	tickUserAction: function() {
 		if (this.state.userAction == UserActionConstants.DISCOVER_SYSTEMS) {
 			if (this.allSystemsDiscovered()) {
+				this.addLogMessage("The are no systems left to discover.");
 				this.setUserAction(UserActionConstants.NOTHING);
 			}
 			else {
@@ -186,13 +201,20 @@ var Clicker = React.createClass({
 			}
 		}
 		else if (this.state.userAction == UserActionConstants.REPAIR_SYSTEMS) {
-			this.repairSelectedSystems();
+			if (this.atZeroPower()) {
+				this.addLogMessage("Repairs have stopped due to lack of power.");
+				this.setUserAction(UserActionConstants.NOTHING);
+			}
+			else {
+				this.repairSelectedSystems();
+			}
 		}
 		else if (this.state.userAction == UserActionConstants.LEARN_SHIP_LANGUAGE) {
 			this.decodeAllSystems();
 		}
 		else if (this.state.userAction == UserActionConstants.GENERATE_POWER) {
 			if (this.atMaxPower()) {
+				this.addLogMessage("You have reached maximum available power.");
 				this.setUserAction(UserActionConstants.NOTHING);
 			}
 			else {
@@ -207,7 +229,7 @@ var Clicker = React.createClass({
 	render: function() {
 		return <div>
 			{this.isDebugMode() && <DebugTools addSystem={this.discoverNewSystem} decodeAllSystems={this.decodeAllSystems} setUserAction={this.setUserAction} fullyUnscrambleAllSystems={this.fullyUnscrambleAllSystems} />}
-			<UserPanel userAction={this.state.userAction} setUserAction={this.setUserAction} allSystemsDiscovered={this.allSystemsDiscovered()} availablePower={this.state.availablePower} atMaxPower={this.atMaxPower()} />
+			<UserPanel userAction={this.state.userAction} setUserAction={this.setUserAction} allSystemsDiscovered={this.allSystemsDiscovered()} availablePower={this.state.availablePower} atMaxPower={this.atMaxPower()} atZeroPower={this.atZeroPower()} logMessages={this.state.logMessages} />
 			<SystemsRenderer systemsSelected={this.state.systemsSelected} selectSystem={this.selectSystem} deselectSystem={this.deselectSystem}>{this.state.systemsDiscovered}</SystemsRenderer>
 			<WinScreen systemsDiscovered={this.state.systemsDiscovered} />
 		</div>;
