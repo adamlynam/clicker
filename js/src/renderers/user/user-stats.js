@@ -12,30 +12,17 @@ module.exports = React.createClass({
 			position: 'relative',
 			width: '200px',
 			height: '2em',
-			backgroundColor: '#cccccc',
+			backgroundImage: 'url(img/empty_tiling_power.png)',
 		};
 		var chargeCss = {
 			width: (this.props.availablePower / SystemConstants.MAX_POWER * 100) + '%',
 			height: '100%',
-			backgroundColor: '#ffff00',
-		}
-		var chargeLabelCss = {
-			position: 'absolute',
-			position: 'absolute',
-			top: 0,
-			left: 0,
-			width: '100%',
-			height: '2em',
-			margin: '0',
-			padding: '0',
-			textAlign: 'center',
-			verticalAlign: 'middle',
+			backgroundImage: 'url(img/tiling_power.png)',
 		}
 		return <div style={statsCss}>
 			<h2></h2>
             <div style={progressBar}>
 				<div style={chargeCss} />
-				<p style={chargeLabelCss}>{this.props.availablePower}%</p>
 			</div>
 		</div>;
 	}
