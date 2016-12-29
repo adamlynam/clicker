@@ -17,6 +17,11 @@ module.exports = {
         "Oxygen Generation",
         "Food Production",
         "Waste Processing",
+        "Small Scale Manufacturing",
+        "Large Scale Manufacturing",
+        "Teleporter",
+        "Tractor Beam",
+        "Door Control",
     ],
     WINNING_SYSTEMS: [
         "Main Power",
@@ -25,6 +30,7 @@ module.exports = {
         "FTL Computer",
         "FTL Drive",
         "Main Thrusters",
+        "Long Range Scanners",
     ],
     // decimal percentage per user tick (e.g. percentage / 100)
     SYSTEM_DISCOVERY_CHANCE: 0.1
