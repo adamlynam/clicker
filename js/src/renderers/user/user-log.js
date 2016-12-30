@@ -10,7 +10,7 @@ module.exports = React.createClass({
             bottom: 0,
             left: 0,
             height: '50%',
-            width: '50%',
+            width: '45%',
             padding: '0px 30px 0px 30px',
 		};
 		var logTextCss = {
