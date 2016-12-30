@@ -21,6 +21,7 @@ var Clicker = React.createClass({
 		return {
 			logMessages: [
 				"You find yourself on spaceship, far from home.",
+				"There is a control panel in front of you.",
 			],
 			systemsUndiscovered: [...SystemConstants.ALL_SYSTEMS],
 			systemsDiscovered: [],
@@ -222,8 +223,29 @@ var Clicker = React.createClass({
 			}
 		}
 	},
+	tickSystemAction: function() {
+		for (var system of this.state.systemsDiscovered) {
+			console.log(system.unscrambledName);
+			if (system.unscrambledName == "Main Power" && system.damage >= 1) {
+				this.addPower(2);
+			}
+			if (system.unscrambledName == "Auxiliary Power" && system.damage >= 1) {
+				this.addPower(1);
+			}
+			if (system.unscrambledName == "Universal Translator" && system.damage >= 1) {
+				this.decodeAllSystems();
+			}
+			if (system.unscrambledName == "Large Scale Manufacturing" && system.damage >= 1) {
+				this.repairSelectedSystems();
+			}
+			if (system.unscrambledName == "Small Scale Manufacturing" && system.damage >= 1) {
+				this.repairSelectedSystems();
+			}
+		}
+	},
 	tick: function() {
 		this.tickUserAction();
+		this.tickSystemAction();
 	},
 
 	render: function() {
