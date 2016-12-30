@@ -96,8 +96,11 @@ var Clicker = React.createClass({
 	},
 	addPath: function(path) {
 		this.setState((previousState, currentProps) => {
-			if (previousState.pathPlotted % 25 == 0) {
+			if (previousState.pathPlotted < 100 && previousState.pathPlotted % 25 == 0) {
 				this.addLogMessage("FTL Travel Path " + previousState.pathPlotted + "% calculated.");
+			}
+			else if (previousState.pathPlotted == 99) {
+				this.addLogMessage("FTL Travel Path fully calculated.");
 			}
 			return {
 				pathPlotted: Math.min(SystemConstants.MAX_PATH_TO_PLOT, previousState.pathPlotted + path),
