@@ -4,6 +4,10 @@ var ReactDOM = require('react-dom');
 var SystemConstants = require('../../systems/system-constants');
 
 module.exports = React.createClass({
+	componentDidUpdate: function() {
+		var logText = ReactDOM.findDOMNode(this.refs.logText);;
+		logText.scrollTop = logText.scrollHeight;
+	},
 	render: function() {
 		var logCss = {
             position: 'fixed',
@@ -22,7 +26,7 @@ module.exports = React.createClass({
 		};
 		return <div style={logCss}>
 			<h2>Log</h2>
-            <div style={logTextCss}>{this.props.children.map((message, index) => {
+            <div style={logTextCss} ref="logText" >{this.props.children.map((message, index) => {
     		    return <p key={index}>{message}</p>
     		})}
             </div>
