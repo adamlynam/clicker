@@ -29,7 +29,9 @@ var Clicker = React.createClass({
 			lastKey: 1,
 			gameTimerInterval: gameTimerInterval,
 			userAction: UserActionConstants.NOTHING,
+			timer: 0,
 			availablePower: 0,
+			pathPlotted: 0,
 		};
 	},
 	getUndiscoveredSystem: function() {
@@ -53,7 +55,7 @@ var Clicker = React.createClass({
 				lastKey: newKey
 			};
 		});
-		this.addLogMessage("You have discovered " + scrambledSystem.name + ", a new ship system.");
+		//this.addLogMessage("You have discovered " + scrambledSystem.name + ", a new ship system.");
 	},
 	decodeSystemName: function(system) {
 		if (this.state.systemsDiscovered.indexOf(system) > -1) {
@@ -89,6 +91,16 @@ var Clicker = React.createClass({
 		this.setState((previousState, currentProps) => {
 			return {
 				availablePower: Math.min(SystemConstants.MAX_POWER, previousState.availablePower + power),
+			};
+		});
+	},
+	addPath: function(path) {
+		this.setState((previousState, currentProps) => {
+			if (previousState.pathPlotted % 25 == 0) {
+				this.addLogMessage("FTL Travel Path " + previousState.pathPlotted + "% calculated.");
+			}
+			return {
+				pathPlotted: Math.min(SystemConstants.MAX_PATH_TO_PLOT, previousState.pathPlotted + path),
 			};
 		});
 	},
@@ -241,18 +253,32 @@ var Clicker = React.createClass({
 				this.repairSelectedSystems();
 			}
 		}
+		var longRangeScanners = this.state.systemsDiscovered.find(discoveredSystem => {
+			return discoveredSystem.unscrambledName == "Long Range Scanners";
+		});
+		var ftlComputer = this.state.systemsDiscovered.find(discoveredSystem => {
+			return discoveredSystem.unscrambledName == "FTL Computer";
+		});
+		if (longRangeScanners && longRangeScanners.damage >= 1 && ftlComputer && ftlComputer.damage >= 1) {
+			this.addPath(1);
+		}
 	},
 	tick: function() {
 		this.tickUserAction();
 		this.tickSystemAction();
+		this.setState((previousState, currentProps) => {
+			return {
+				timer: previousState.timer + 1,
+			};
+		});
 	},
 
 	render: function() {
 		return <div>
 			{this.isDebugMode() && <DebugTools addSystem={this.discoverNewSystem} decodeAllSystems={this.decodeAllSystems} setUserAction={this.setUserAction} fullyUnscrambleAllSystems={this.fullyUnscrambleAllSystems} />}
-			<UserPanel userAction={this.state.userAction} setUserAction={this.setUserAction} allSystemsDiscovered={this.allSystemsDiscovered()} availablePower={this.state.availablePower} atMaxPower={this.atMaxPower()} atZeroPower={this.atZeroPower()} logMessages={this.state.logMessages} />
+			<UserPanel userAction={this.state.userAction} setUserAction={this.setUserAction} allSystemsDiscovered={this.allSystemsDiscovered()} timer={this.state.timer} availablePower={this.state.availablePower} atMaxPower={this.atMaxPower()} atZeroPower={this.atZeroPower()} pathPlotted={this.state.pathPlotted} logMessages={this.state.logMessages} />
 			<SystemsRenderer systemsSelected={this.state.systemsSelected} selectSystem={this.selectSystem} deselectSystem={this.deselectSystem}>{this.state.systemsDiscovered}</SystemsRenderer>
-			<WinScreen systemsDiscovered={this.state.systemsDiscovered} />
+			<WinScreen systemsDiscovered={this.state.systemsDiscovered} pathPlotted={this.state.pathPlotted} />
 		</div>;
 	}
 });

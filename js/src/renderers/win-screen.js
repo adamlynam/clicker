@@ -4,7 +4,7 @@ var ReactDOM = require('react-dom');
 var SystemConstants = require('../systems/system-constants');
 
 module.exports = React.createClass({
-    checkForWin: function() {
+    winningSystemsEnabled: function() {
         for (var winningSystem of SystemConstants.WINNING_SYSTEMS) {
             if (!this.props.systemsDiscovered.find(discoveredSystem => {
                 return discoveredSystem.damage >= 1 && discoveredSystem.unscrambledName == winningSystem;
@@ -14,6 +14,13 @@ module.exports = React.createClass({
         }
 
         return true;
+    },
+    checkForWin: function() {
+        if (this.props.pathPlotted >= SystemConstants.MAX_PATH_TO_PLOT) {
+            return this.winningSystemsEnabled();
+        }
+
+        return false;
     },
 
 	render: function() {

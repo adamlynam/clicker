@@ -29,12 +29,11 @@ module.exports = {
         "Main Power",
         "Helm",
         "Fuel Regulation",
-        "FTL Computer",
         "FTL Drive",
         "Main Thrusters",
-        "Long Range Scanners",
     ],
     // decimal percentage per user tick (e.g. percentage / 100)
     SYSTEM_DISCOVERY_CHANCE: 0.1,
-    MAX_POWER: 100
+    MAX_POWER: 100,
+    MAX_PATH_TO_PLOT: 100,
 }
