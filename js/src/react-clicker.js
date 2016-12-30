@@ -225,7 +225,6 @@ var Clicker = React.createClass({
 	},
 	tickSystemAction: function() {
 		for (var system of this.state.systemsDiscovered) {
-			console.log(system.unscrambledName);
 			if (system.unscrambledName == "Main Power" && system.damage >= 1) {
 				this.addPower(2);
 			}
