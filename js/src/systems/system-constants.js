@@ -26,6 +26,7 @@ var SYSTEMS = {
     AIRLOCK: "Airlock",
     DOCKING_CLAMPS: "Docking Clamps",
     AUTOPILOT: "Autopilot",
+    EMERGENCY_LIGHTING: "Emergency Lighting",
 }
 
 module.exports = {
@@ -111,6 +112,9 @@ module.exports = {
         },
         {
             key: SYSTEMS.AUTOPILOT,
+        },
+        {
+            key: SYSTEMS.EMERGENCY_LIGHTING,
         },
     ],
     WINNING_SYSTEMS: [

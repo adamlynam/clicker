@@ -36,7 +36,7 @@ module.exports = React.createClass({
 			height: '50px',
 		}
 		var rowCss = systemCss;
-		if (this.props.noPower) {
+		if (this.props.noLights) {
 			rowCss = this.props.isHighlighted ? Object.assign(systemCss, highlightSystemCss) : Object.assign(systemCss, nonHighlightSystemCss);
 		}
 		var letters = this.props.children.name.split('');

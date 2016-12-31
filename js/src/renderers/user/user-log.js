@@ -20,8 +20,10 @@ module.exports = React.createClass({
 		var logTextCss = {
             height: '80%',
             width: '100%',
+			backgroundColor: '#000000',
             border: '1px dotted #000000',
             padding: '0px 10px 0px 10px',
+			color: '#ffffff',
             overflow: 'auto',
 		};
 		return <div style={logCss}>
