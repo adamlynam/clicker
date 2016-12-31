@@ -38,6 +38,8 @@ var Clicker = React.createClass({
 			timer: 0,
 			availablePower: 0,
 			pathPlotted: 0,
+			lightLumens: 1,
+			emergencyLightLumens: 0,
 		};
 	},
 	initaliseSystems: function() {
@@ -108,6 +110,22 @@ var Clicker = React.createClass({
 		this.setState((previousState, currentProps) => {
 			return {
 				availablePower: Math.min(SystemConstants.MAX_POWER, previousState.availablePower + power),
+			};
+		});
+	},
+	addLumens: function(lumens) {
+		this.setState((previousState, currentProps) => {
+			return {
+				lightLumens: Math.min(1, previousState.lightLumens + lumens),
+			};
+		});
+	},
+	addEmergencyLumens: function(lumens) {
+		this.setState((previousState, currentProps) => {
+			console.log(lumens);
+			console.log(Math.min(1, previousState.emergencyLightLumens + lumens));
+			return {
+				emergencyLightLumens: Math.min(1, previousState.emergencyLightLumens + lumens),
 			};
 		});
 	},
@@ -274,6 +292,15 @@ var Clicker = React.createClass({
 		if (this.state.systems.get(SystemConstants.SYSTEMS.LONG_RANGE_SCANNERS).damage >= 1 && this.state.systems.get(SystemConstants.SYSTEMS.FTL_COMPUTER).damage >= 1) {
 			this.addPath(1);
 		}
+		// lights
+		if (this.noPower() && this.emergencyLighting() && (this.state.emergencyLightLumens < 1 || this.state.lightLumens > 0)) {
+			this.addLumens(-0.1);
+			this.addEmergencyLumens(0.1);
+		}
+		if (!this.noPower() && (this.state.emergencyLightLumens > 0 || this.state.lightLumens > 0)) {
+			this.addLumens(-0.1);
+			this.addEmergencyLumens(-0.1);
+		}
 	},
 	tick: function() {
 		this.tickUserAction();
@@ -310,8 +337,8 @@ var Clicker = React.createClass({
 	render: function() {
 		return <div>
 			{this.isDebugMode() && <DebugTools addSystem={this.discoverNewSystem} decodeAllSystems={this.decodeAllSystems} setUserAction={this.setUserAction} fullyUnscrambleAllSystems={this.fullyUnscrambleAllSystems} />}
-			{this.noLights() && <NoPower />}
-			{this.emergencyLighting() && <EmergencyLighting />}
+			{this.state.lightLumens > 0 && <NoPower lumens={this.state.lightLumens} />}
+			{this.state.emergencyLightLumens > 0 && <EmergencyLighting lumens={this.state.emergencyLightLumens} />}
 			<UserPanel userAction={this.state.userAction} setUserAction={this.setUserAction} allSystemsDiscovered={this.allSystemsDiscovered()} timer={this.state.timer} availablePower={this.state.availablePower} atMaxPower={this.atMaxPower()} atZeroPower={this.atZeroPower()} pathPlotted={this.state.pathPlotted} logMessages={this.state.logMessages} />
 			<SystemsRenderer noLights={this.noLights()} systemsHighlighted={this.noPower() ? new Map([[SystemConstants.SYSTEMS.EMERGENCY_LIGHTING, true]]) : new Map()} systemsSelected={this.state.systemsSelected} selectSystem={this.selectSystem} deselectSystem={this.deselectSystem}>{this.getSystemsDiscovered()}</SystemsRenderer>
 			{this.isWon() && <WinScreen />}
