@@ -14,7 +14,7 @@ module.exports = React.createClass({
         };
 		return <div style={userPanelCss}>
             <UserTools userAction={this.props.userAction} setUserAction={this.props.setUserAction} allSystemsDiscovered={this.props.allSystemsDiscovered} atMaxPower={this.props.atMaxPower} atZeroPower={this.props.atZeroPower} />
-			<UserStats timer={this.props.timer} availablePower={this.props.availablePower} pathPlotted={this.props.pathPlotted} />
+			<UserStats timer={this.props.timer} distanceVisible={this.props.distanceVisible} distanceToHome={this.props.distanceToHome} availablePower={this.props.availablePower} pathPlotted={this.props.pathPlotted} />
 			<UserLog>{this.props.logMessages}</UserLog>
 		</div>;
 	}

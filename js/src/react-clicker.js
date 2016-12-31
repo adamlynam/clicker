@@ -3,6 +3,7 @@ var ReactDOM = require('react-dom');
 
 var DebugTools = require('./dev/debug-tools');
 
+var GameConstants = require('./game-constants');
 var SystemConstants = require('./systems/system-constants');
 var UserActionConstants = require('./actions/user-actions-constants');
 
@@ -36,6 +37,7 @@ var Clicker = React.createClass({
 			gameTimerInterval: gameTimerInterval,
 			userAction: UserActionConstants.NOTHING,
 			timer: 0,
+			distanceToHome: Math.floor(Math.random() * GameConstants.MAX_DISTANCE_TO_HOME),
 			availablePower: 0,
 			pathPlotted: 0,
 			lightsOn: false,
@@ -111,7 +113,7 @@ var Clicker = React.createClass({
 	addPower: function(power) {
 		this.setState((previousState, currentProps) => {
 			return {
-				availablePower: Math.min(SystemConstants.MAX_POWER, previousState.availablePower + power),
+				availablePower: Math.min(GameConstants.MAX_POWER, previousState.availablePower + power),
 			};
 		});
 	},
@@ -174,6 +176,15 @@ var Clicker = React.createClass({
 			};
 		});
 	},
+	addDistance: function(distance) {
+		if (this.state.distanceToHome >= Math.abs(distance)) {
+			this.setState((previousState, currentProps) => {
+				return {
+					distanceToHome: Math.max(0, previousState.distanceToHome + distance),
+				};
+			});
+		}
+	},
 	addPath: function(path) {
 		this.setState((previousState, currentProps) => {
 			if (previousState.pathPlotted < 100 && previousState.pathPlotted % 25 == 0) {
@@ -183,7 +194,7 @@ var Clicker = React.createClass({
 				this.addLogMessage("FTL Travel Path fully calculated.");
 			}
 			return {
-				pathPlotted: Math.min(SystemConstants.MAX_PATH_TO_PLOT, previousState.pathPlotted + path),
+				pathPlotted: Math.min(GameConstants.MAX_PATH_TO_PLOT, previousState.pathPlotted + path),
 			};
 		});
 	},
@@ -266,13 +277,13 @@ var Clicker = React.createClass({
 		return [...this.state.systemsDiscovered.keys()].length >= SystemConstants.ALL_SYSTEMS.length;
 	},
 	atMaxPower: function() {
-		return this.state.availablePower >= SystemConstants.MAX_POWER;
+		return this.state.availablePower >= GameConstants.MAX_POWER;
 	},
 	atZeroPower: function() {
 		return this.state.availablePower <= 0;
 	},
 	attemptToDiscoverNewSystem: function() {
-		if (Math.random() < SystemConstants.SYSTEM_DISCOVERY_CHANCE) {
+		if (Math.random() < GameConstants.SYSTEM_DISCOVERY_CHANCE) {
 			this.discoverNewSystem();
 		}
 	},
@@ -337,6 +348,16 @@ var Clicker = React.createClass({
 		if (this.state.systems.get(SystemConstants.SYSTEMS.LONG_RANGE_SCANNERS).damage >= 1 && this.state.systems.get(SystemConstants.SYSTEMS.FTL_COMPUTER).damage >= 1) {
 			this.addPath(1);
 		}
+		// travel home
+		if (this.state.systems.get(SystemConstants.SYSTEMS.FTL_DRIVE).damage >= 1 && this.state.pathPlotted >= GameConstants.MAX_PATH_TO_PLOT) {
+			this.addDistance(-10000);
+		}
+		if (this.state.systems.get(SystemConstants.SYSTEMS.MAIN_THRUSTERS).damage >= 1 && this.state.systems.get(SystemConstants.SYSTEMS.FUEL_REGULATION).damage >= 1 && this.state.systems.get(SystemConstants.SYSTEMS.HELM).damage >= 1) {
+			this.addDistance(-100);
+		}
+		if (this.state.systems.get(SystemConstants.SYSTEMS.MANUVERING_THRUSTERS).damage >= 1 && this.state.systems.get(SystemConstants.SYSTEMS.FUEL_REGULATION).damage >= 1 && this.state.systems.get(SystemConstants.SYSTEMS.HELM).damage >= 1) {
+			this.addDistance(-1);
+		}
 		// lights
 		if (!this.noPower() && !this.state.lightsOn) {
 			this.enableLights();
@@ -363,18 +384,11 @@ var Clicker = React.createClass({
 	noLights: function() {
 		return this.noPower() && !this.emergencyLighting();
 	},
+	distanceVisible: function() {
+		return this.state.systems.get(SystemConstants.SYSTEMS.LONG_RANGE_SCANNERS).damage >= 1
+	},
 	isWon: function() {
-        if (this.state.pathPlotted >= SystemConstants.MAX_PATH_TO_PLOT) {
-			for (var winningSystem of SystemConstants.WINNING_SYSTEMS) {
-				if (this.state.systems.get(winningSystem).damage < 1) {
-					return false;
-				}
-			}
-
-			return true;
-        }
-
-        return false;
+		return this.state.distanceToHome <= 0;
 	},
 
 	render: function() {
@@ -382,7 +396,7 @@ var Clicker = React.createClass({
 			{this.isDebugMode() && <DebugTools addSystem={this.discoverNewSystem} decodeAllSystems={this.decodeAllSystems} setUserAction={this.setUserAction} fullyUnscrambleAllSystems={this.fullyUnscrambleAllSystems} />}
 			{this.state.lightLumens > 0 && <NoPower lumens={this.state.lightLumens} />}
 			{this.state.emergencyLightLumens > 0 && <EmergencyLighting lumens={this.state.emergencyLightLumens} />}
-			<UserPanel userAction={this.state.userAction} setUserAction={this.setUserAction} allSystemsDiscovered={this.allSystemsDiscovered()} timer={this.state.timer} availablePower={this.state.availablePower} atMaxPower={this.atMaxPower()} atZeroPower={this.atZeroPower()} pathPlotted={this.state.pathPlotted} logMessages={this.state.logMessages} />
+			<UserPanel userAction={this.state.userAction} setUserAction={this.setUserAction} allSystemsDiscovered={this.allSystemsDiscovered()} timer={this.state.timer} distanceVisible={this.distanceVisible()} distanceToHome={this.state.distanceToHome} availablePower={this.state.availablePower} atMaxPower={this.atMaxPower()} atZeroPower={this.atZeroPower()} pathPlotted={this.state.pathPlotted} logMessages={this.state.logMessages} />
 			<SystemsRenderer noLights={this.noLights()} systemsHighlighted={this.noPower() ? new Map([[SystemConstants.SYSTEMS.EMERGENCY_LIGHTING, true]]) : new Map()} systemsSelected={this.state.systemsSelected} selectSystem={this.selectSystem} deselectSystem={this.deselectSystem}>{this.getSystemsDiscovered()}</SystemsRenderer>
 			{this.isWon() && <WinScreen />}
 		</div>;

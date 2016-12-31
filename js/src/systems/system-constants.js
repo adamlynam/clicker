@@ -117,15 +117,4 @@ module.exports = {
             key: SYSTEMS.EMERGENCY_LIGHTING,
         },
     ],
-    WINNING_SYSTEMS: [
-        SYSTEMS.MAIN_POWER,
-        SYSTEMS.HELM,
-        SYSTEMS.FUEL_REGULATION,
-        SYSTEMS.FTL_DRIVE,
-        SYSTEMS.MAIN_THRUSTERS,
-    ],
-    // decimal percentage per user tick (e.g. percentage / 100)
-    SYSTEM_DISCOVERY_CHANCE: 0.1,
-    MAX_POWER: 100,
-    MAX_PATH_TO_PLOT: 100,
 }

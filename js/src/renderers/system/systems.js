@@ -1,8 +1,6 @@
 var React = require('react');
 var ReactDOM = require('react-dom');
 
-var SystemConstants = require('../../systems/system-constants');
-
 var SystemRenderer = require('./system');
 
 module.exports = React.createClass({
