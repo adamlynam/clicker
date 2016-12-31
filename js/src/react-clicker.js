@@ -8,6 +8,9 @@ var UserActionConstants = require('./actions/user-actions-constants');
 
 var UserPanel = require('./renderers/user/user-panel');
 var SystemsRenderer = require('./renderers/system/systems');
+
+var NoPower = require('./renderers/no-power');
+var AuxPower = require('./renderers/aux-power');
 var WinScreen = require('./renderers/win-screen');
 
 var SystemScrambler = require('./language/system-scrambler');
@@ -25,7 +28,9 @@ var Clicker = React.createClass({
 			],
 			systems: this.initaliseSystems(),
 			systemsUndiscovered: this.initaliseUndiscoveredSystems(),
-			systemsDiscovered: new Map(),
+			systemsDiscovered: new Map([
+				[SystemConstants.SYSTEMS.AUXILIARY_POWER, true],
+			]),
 			systemsSelected: new Map(),
 			lastKey: 1,
 			gameTimerInterval: gameTimerInterval,
@@ -266,7 +271,7 @@ var Clicker = React.createClass({
 			this.repairSelectedSystems();
 		}
 		// plot FTL path
-		if (this.state.systemsDiscovered.has(SystemConstants.SYSTEMS.LONG_RANGE_SCANNERS) && this.state.systems.get(SystemConstants.SYSTEMS.LONG_RANGE_SCANNERS).damage >= 1 && this.state.systemsDiscovered.has(SystemConstants.SYSTEMS.FTL_COMPUTER) && this.state.systems.get(SystemConstants.SYSTEMS.FTL_COMPUTER).damage >= 1) {
+		if (this.state.systems.get(SystemConstants.SYSTEMS.LONG_RANGE_SCANNERS).damage >= 1 && this.state.systems.get(SystemConstants.SYSTEMS.FTL_COMPUTER).damage >= 1) {
 			this.addPath(1);
 		}
 	},
@@ -279,10 +284,16 @@ var Clicker = React.createClass({
 			};
 		});
 	},
+	noPower: function() {
+		return this.state.systems.get(SystemConstants.SYSTEMS.MAIN_POWER).damage < 1 && this.state.systems.get(SystemConstants.SYSTEMS.AUXILIARY_POWER).damage < 1
+	},
+	auxPowerOnly: function() {
+		return this.state.systems.get(SystemConstants.SYSTEMS.MAIN_POWER).damage < 1 && this.state.systems.get(SystemConstants.SYSTEMS.AUXILIARY_POWER).damage >= 1
+	},
 	isWon: function() {
         if (this.state.pathPlotted >= SystemConstants.MAX_PATH_TO_PLOT) {
 			for (var winningSystem of SystemConstants.WINNING_SYSTEMS) {
-				if (!this.state.systemsDiscovered.has(winningSystem)) {
+				if (this.state.systems.get(winningSystem).damage < 1) {
 					return false;
 				}
 			}
@@ -296,9 +307,11 @@ var Clicker = React.createClass({
 	render: function() {
 		return <div>
 			{this.isDebugMode() && <DebugTools addSystem={this.discoverNewSystem} decodeAllSystems={this.decodeAllSystems} setUserAction={this.setUserAction} fullyUnscrambleAllSystems={this.fullyUnscrambleAllSystems} />}
+			{this.noPower() && <NoPower />}
+			{this.auxPowerOnly() && <AuxPower />}
 			<UserPanel userAction={this.state.userAction} setUserAction={this.setUserAction} allSystemsDiscovered={this.allSystemsDiscovered()} timer={this.state.timer} availablePower={this.state.availablePower} atMaxPower={this.atMaxPower()} atZeroPower={this.atZeroPower()} pathPlotted={this.state.pathPlotted} logMessages={this.state.logMessages} />
-			<SystemsRenderer systemsSelected={this.state.systemsSelected} selectSystem={this.selectSystem} deselectSystem={this.deselectSystem}>{this.getSystemsDiscovered()}</SystemsRenderer>
-			{this.isWon() && <WinScreen isWon={this.isWon()} />}
+			<SystemsRenderer noPower={this.noPower()} systemsSelected={this.state.systemsSelected} selectSystem={this.selectSystem} deselectSystem={this.deselectSystem}>{this.getSystemsDiscovered()}</SystemsRenderer>
+			{this.isWon() && <WinScreen />}
 		</div>;
 	}
 });

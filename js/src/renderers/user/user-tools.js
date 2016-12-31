@@ -22,6 +22,7 @@ module.exports = React.createClass({
 
 	render: function() {
         var userOptionCss = {
+			position: 'relative',
 			float: 'left',
 			margin: '5px',
 			padding: '10px',

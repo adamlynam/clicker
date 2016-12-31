@@ -14,6 +14,12 @@ module.exports = React.createClass({
 
 	render: function() {
 		var isRepaired = this.props.children.damage < 1;
+		var highlightSystemCss = {
+			opacity: '0.2',
+		};
+		var nonHighlightSystemCss = {
+			opacity: '0',
+		};
 		var systemCss = {
 			position: 'relative',
 			float: 'left',
@@ -29,8 +35,12 @@ module.exports = React.createClass({
 			backgroundImage: 'url(img/tiling_circuits.png)',
 			height: '50px',
 		}
+		var rowCss = systemCss;
+		if (this.props.noPower) {
+			rowCss = this.props.isHighlighted ? Object.assign(systemCss, highlightSystemCss) : Object.assign(systemCss, nonHighlightSystemCss);
+		}
 		var letters = this.props.children.name.split('');
-		return <div style={systemCss} onClick={this.toggleSelected}>
+		return <div style={rowCss} onClick={this.toggleSelected}>
 			<div style={damageCss} />
 			<SystemName>{this.props.children}</SystemName>
 		</div>;

@@ -25,6 +25,7 @@ var SYSTEMS = {
     UNIVERSAL_TRANSLATOR: "Universal Translator",
     AIRLOCK: "Airlock",
     DOCKING_CLAMPS: "Docking Clamps",
+    AUTOPILOT: "Autopilot",
 }
 
 module.exports = {
@@ -107,6 +108,9 @@ module.exports = {
         },
         {
             key: SYSTEMS.DOCKING_CLAMPS,
+        },
+        {
+            key: SYSTEMS.AUTOPILOT,
         },
     ],
     WINNING_SYSTEMS: [

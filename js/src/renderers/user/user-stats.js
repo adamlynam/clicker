@@ -9,7 +9,6 @@ module.exports = React.createClass({
 			clear: 'both',
 		};
 		var chargeBarCss = {
-			position: 'relative',
 			width: '200px',
 			height: '2em',
 			margin: '5px',
@@ -21,7 +20,6 @@ module.exports = React.createClass({
 			backgroundImage: 'url(img/tiling_power.png)',
 		}
 		var pathBarCss = {
-			position: 'relative',
 			width: '200px',
 			height: '2em',
 			margin: '5px',

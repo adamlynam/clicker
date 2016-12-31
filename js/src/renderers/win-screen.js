@@ -23,7 +23,7 @@ module.exports = React.createClass({
             color: '#ffffff',
             fontSize: '8em',
 		};
-		return this.props.isWon && <div style={winGreyOutCss}>
+		return <div style={winGreyOutCss}>
               <div style={winDialogCss}>Congratulations you made it home!</div>
   		</div>;
 	}
