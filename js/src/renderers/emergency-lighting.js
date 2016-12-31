@@ -1,7 +1,7 @@
 var React = require('react');
 var ReactDOM = require('react-dom');
 
-var MAX_OPACITY = 0.5;
+var MAX_OPACITY = 0.7;
 
 module.exports = React.createClass({
 	render: function() {

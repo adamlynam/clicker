@@ -38,7 +38,9 @@ var Clicker = React.createClass({
 			timer: 0,
 			availablePower: 0,
 			pathPlotted: 0,
+			lightsOn: false,
 			lightLumens: 1,
+			emergencyLightsOn: false,
 			emergencyLightLumens: 0,
 		};
 	},
@@ -113,6 +115,34 @@ var Clicker = React.createClass({
 			};
 		});
 	},
+	enableLights: function() {
+		this.addLogMessage("System power restored.");
+		this.setState((previousState, currentProps) => {
+			return {
+				lightsOn: true,
+				emergencyLightsOn: false,
+			};
+		});
+		var emergencyLightInterval = setInterval(() => {
+			if (this.state.emergencyLightLumens > 0) {
+				this.addEmergencyLumens(-0.01);
+			}
+			else {
+				clearInterval(emergencyLightInterval);
+			}
+		}, 100);
+		this.disableDarkness();
+	},
+	disableDarkness: function() {
+		var darknessInterval = setInterval(() => {
+			if (this.state.lightLumens > 0) {
+				this.addLumens(-0.01);
+			}
+			else {
+				clearInterval(darknessInterval);
+			}
+		}, 100);
+	},
 	addLumens: function(lumens) {
 		this.setState((previousState, currentProps) => {
 			return {
@@ -120,10 +150,25 @@ var Clicker = React.createClass({
 			};
 		});
 	},
+	enableEmergencyLights: function() {
+		this.addLogMessage("Emergency lighting restored.");
+		this.setState((previousState, currentProps) => {
+			return {
+				emergencyLightsOn: true,
+			};
+		});
+		var emergencyLightInterval = setInterval(() => {
+			if (this.state.emergencyLightLumens < 1) {
+				this.addEmergencyLumens(0.01);
+			}
+			else {
+				clearInterval(emergencyLightInterval);
+			}
+		}, 100);
+		this.disableDarkness();
+	},
 	addEmergencyLumens: function(lumens) {
 		this.setState((previousState, currentProps) => {
-			console.log(lumens);
-			console.log(Math.min(1, previousState.emergencyLightLumens + lumens));
 			return {
 				emergencyLightLumens: Math.min(1, previousState.emergencyLightLumens + lumens),
 			};
@@ -293,13 +338,11 @@ var Clicker = React.createClass({
 			this.addPath(1);
 		}
 		// lights
-		if (this.noPower() && this.emergencyLighting() && (this.state.emergencyLightLumens < 1 || this.state.lightLumens > 0)) {
-			this.addLumens(-0.1);
-			this.addEmergencyLumens(0.1);
+		if (!this.noPower() && !this.state.lightsOn) {
+			this.enableLights();
 		}
-		if (!this.noPower() && (this.state.emergencyLightLumens > 0 || this.state.lightLumens > 0)) {
-			this.addLumens(-0.1);
-			this.addEmergencyLumens(-0.1);
+		if (this.emergencyLighting() && !this.state.emergencyLightsOn) {
+			this.enableEmergencyLights();
 		}
 	},
 	tick: function() {
