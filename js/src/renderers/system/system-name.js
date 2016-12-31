@@ -13,7 +13,7 @@ module.exports = React.createClass({
 		var letters = this.props.children.name.split('');
 		return <p style={nameCss}>{letters.map((letter, index) => {
 			var letterCss = {
-				color: letter == this.props.children.unscrambledName[index] ? '#000000' : '#ff0000'
+				color: letter == this.props.children.key[index] ? '#000000' : '#ff0000'
 			};
 			return <span key={index} style={letterCss} >{letter}</span>;
 		})}</p>;

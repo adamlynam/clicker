@@ -1,28 +1,7 @@
 var React = require('react');
 var ReactDOM = require('react-dom');
 
-var SystemConstants = require('../systems/system-constants');
-
 module.exports = React.createClass({
-    winningSystemsEnabled: function() {
-        for (var winningSystem of SystemConstants.WINNING_SYSTEMS) {
-            if (!this.props.systemsDiscovered.find(discoveredSystem => {
-                return discoveredSystem.damage >= 1 && discoveredSystem.unscrambledName == winningSystem;
-            })) {
-                return false;
-            }
-        }
-
-        return true;
-    },
-    checkForWin: function() {
-        if (this.props.pathPlotted >= SystemConstants.MAX_PATH_TO_PLOT) {
-            return this.winningSystemsEnabled();
-        }
-
-        return false;
-    },
-
 	render: function() {
 		var winGreyOutCss = {
             position: 'fixed',
@@ -44,7 +23,7 @@ module.exports = React.createClass({
             color: '#ffffff',
             fontSize: '8em',
 		};
-		return this.checkForWin() && <div style={winGreyOutCss}>
+		return this.props.isWon && <div style={winGreyOutCss}>
               <div style={winDialogCss}>Congratulations you made it home!</div>
   		</div>;
 	}

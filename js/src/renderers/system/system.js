@@ -6,9 +6,9 @@ var SystemName = require('./system-name');
 module.exports = React.createClass({
 	toggleSelected: function(object) {
 		if (this.props.isSelected) {
-			this.props.deselectSystem(this.props.children);
+			this.props.deselectSystem(this.props.children.key);
 		} else {
-			this.props.selectSystem(this.props.children);
+			this.props.selectSystem(this.props.children.key);
 		}
 	},
 

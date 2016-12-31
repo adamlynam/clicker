@@ -3,38 +3,28 @@ function randomLetter() {
     return charset.charAt(Math.floor(Math.random() * charset.length));
 }
 
-function generateScrambledName(name) {
-    var scrambledName = "";
-    for (var letter of name) {
-        scrambledName += randomLetter();
+function generateScrambledText(text) {
+    var scrambledText = "";
+    for (var letter of text) {
+        scrambledText += randomLetter();
     }
-    return scrambledName;
+    return scrambledText;
 }
 
 module.exports = {
-    scramble: function(system) {
-        return Object.assign(Object.assign({}, system), {
-            name: generateScrambledName(system.name),
-            unscrambledName: system.name
-        });
+    scramble: function(text) {
+        return generateScrambledText(text);
     },
-    decodeStep: function(system) {
-        var decodedName = "";
-        for (var i = 0; i < system.name.length; i++) {
-            if (system.name[i] == system.unscrambledName[i]) {
-                decodedName += system.name[i];
+    decodeStep: function(text, unscrambledText) {
+        var decodedText = "";
+        for (var i = 0; i < text.length; i++) {
+            if (text[i] == unscrambledText[i]) {
+                decodedText += text[i];
             }
             else {
-                decodedName += randomLetter();
+                decodedText += randomLetter();
             }
         }
-        return Object.assign(Object.assign({}, system), {
-            name: decodedName
-        });
-    },
-    unscramble: function(system) {
-        return Object.assign(Object.assign({}, system), {
-            name: system.unscrambledName
-        });
+        return decodedText;
     }
 }
