@@ -13,7 +13,7 @@ module.exports = React.createClass({
             width: '50%',
         };
 		return <div style={userPanelCss}>
-            <UserTools userAction={this.props.userAction} setUserAction={this.props.setUserAction} allSystemsDiscovered={this.props.allSystemsDiscovered} atMaxPower={this.props.atMaxPower} atZeroPower={this.props.atZeroPower} />
+            <UserTools userAction={this.props.userAction} setUserAction={this.props.setUserAction} allSystemsDiscovered={this.props.allSystemsDiscovered} allWordsLearned={this.props.allWordsLearned} atMaxPower={this.props.atMaxPower} atZeroPower={this.props.atZeroPower} />
 			<UserStats timer={this.props.timer} distanceVisible={this.props.distanceVisible} distanceToHome={this.props.distanceToHome} availablePower={this.props.availablePower} pathPlotted={this.props.pathPlotted} />
 			<UserLog>{this.props.logMessages}</UserLog>
 		</div>;

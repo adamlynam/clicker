@@ -10,7 +10,7 @@ module.exports = React.createClass({
 			left: '0',
 			width: '100%',
 		}
-		var letters = this.props.children.name.split('');
+		var letters = this.props.translate(this.props.children.key).split("");
 		return <p style={nameCss}>{letters.map((letter, index) => {
 			var letterCss = {
 				color: letter == this.props.children.key[index] ? '#000000' : '#ff0000'

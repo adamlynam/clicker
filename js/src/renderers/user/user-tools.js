@@ -46,7 +46,7 @@ module.exports = React.createClass({
                 <span>Repair Systems</span>
             </label>
             <label style={userOptionCss}>
-                <input name="current-action" type="radio" onChange={this.setUserActionToLearnShipLanguage} checked={this.props.userAction == UserActionContants.LEARN_SHIP_LANGUAGE ? true : null} />
+                <input name="current-action" type="radio" onChange={this.setUserActionToLearnShipLanguage} checked={this.props.userAction == UserActionContants.LEARN_SHIP_LANGUAGE ? true : null} disabled={this.props.allWordsLearned} readOnly={this.props.allWordsLearned} />
                 <span>Learn Language</span>
             </label>
             <label style={userOptionCss}>

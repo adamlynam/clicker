@@ -39,10 +39,9 @@ module.exports = React.createClass({
 		if (this.props.noLights) {
 			rowCss = this.props.isHighlighted ? Object.assign(systemCss, highlightSystemCss) : Object.assign(systemCss, nonHighlightSystemCss);
 		}
-		var letters = this.props.children.name.split('');
 		return <div style={rowCss} onClick={this.toggleSelected}>
 			<div style={damageCss} />
-			<SystemName>{this.props.children}</SystemName>
+			<SystemName translate={this.props.translate}>{this.props.children}</SystemName>
 		</div>;
 	}
 });

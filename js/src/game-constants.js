@@ -6,4 +6,5 @@ module.exports = {
     MAX_POWER: 100,
     // decimal percentage per user tick (e.g. percentage / 100)
     SYSTEM_DISCOVERY_CHANCE: 0.1,
+    LEARN_DISCOVERY_CHANCE: 0.1,
 }

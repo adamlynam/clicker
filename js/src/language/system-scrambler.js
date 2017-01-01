@@ -15,16 +15,4 @@ module.exports = {
     scramble: function(text) {
         return generateScrambledText(text);
     },
-    decodeStep: function(text, unscrambledText) {
-        var decodedText = "";
-        for (var i = 0; i < text.length; i++) {
-            if (text[i] == unscrambledText[i]) {
-                decodedText += text[i];
-            }
-            else {
-                decodedText += randomLetter();
-            }
-        }
-        return decodedText;
-    }
 }

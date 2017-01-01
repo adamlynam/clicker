@@ -33,6 +33,10 @@ var Clicker = React.createClass({
 				[SystemConstants.SYSTEMS.EMERGENCY_LIGHTING, true],
 			]),
 			systemsSelected: new Map(),
+			wordsUnlearned: this.initaliseWords(),
+			wordsLearned: new Map([
+				[" ", true],
+			]),
 			lastKey: 1,
 			gameTimerInterval: gameTimerInterval,
 			userAction: UserActionConstants.NOTHING,
@@ -50,7 +54,6 @@ var Clicker = React.createClass({
 		var allSystems = new Map();
 		for (var system of SystemConstants.ALL_SYSTEMS) {
 			var scrambledSystem = Object.assign(Object.assign({}, system), {
-		        name: SystemScrambler.scramble(system.key),
 				damage: Math.floor(Math.random() * 100) / 100,
 			});
 			allSystems.set(scrambledSystem.key, scrambledSystem);
@@ -63,6 +66,16 @@ var Clicker = React.createClass({
 			allSystemNames.set(system.key, true);
 		}
 		return allSystemNames;
+	},
+	initaliseWords: function() {
+		var allWords = new Map();
+		for (var system of SystemConstants.ALL_SYSTEMS) {
+			var words = system.key.split(" ");
+			for (var word of words) {
+				allWords.set(word.toLowerCase(), true);
+			}
+		}
+		return allWords;
 	},
 	discoverNewSystem: function() {
 		var undiscoveredSystemKeys = [...this.state.systemsUndiscovered.keys()];
@@ -82,18 +95,23 @@ var Clicker = React.createClass({
 			//this.addLogMessage("You have discovered " + scrambledSystem.name + ", a new ship system.");
 		}
 	},
-	decodeSystemName: function(system) {
-		var decodedSystem = Object.assign(Object.assign({}, system), {
-			name: SystemScrambler.decodeStep(system.name, system.key),
-		});
+	learnNewWord: function() {
+		var wordsUnlearned = [...this.state.wordsUnlearned.keys()];
+		if (wordsUnlearned.length > 0) {
+			var discoveredWord = wordsUnlearned[Math.floor(Math.random() * wordsUnlearned.length)];
 
-		this.setState((previousState, currentProps) => {
-			var systems = new Map(previousState.systems);
-			systems.set(system.key, decodedSystem);
-			return {
-				systems: systems,
-			};
-		});
+			this.setState((previousState, currentProps) => {
+				var wordsUnlearned = new Map(previousState.wordsUnlearned);
+				var wordsLearned = new Map(previousState.wordsLearned);
+				wordsUnlearned.delete(discoveredWord);
+				wordsLearned.set(discoveredWord, true);
+				return {
+					wordsUnlearned: wordsUnlearned,
+					wordsLearned: wordsLearned,
+				};
+			});
+			this.addLogMessage("You have learned the ships word for \"" + discoveredWord + "\".");
+		}
 	},
 	fullyUnscrambleSystemName: function(system) {
 		if (this.state.systemsDiscovered.indexOf(system) > -1) {
@@ -268,13 +286,11 @@ var Clicker = React.createClass({
 			return this.state.systems.get(systemKey);
 		});
 	},
-	decodeAllSystems: function() {
-		for (var [systemKey, system] of this.state.systems) {
-			this.decodeSystemName(system);
-		}
-	},
 	allSystemsDiscovered: function() {
-		return [...this.state.systemsDiscovered.keys()].length >= SystemConstants.ALL_SYSTEMS.length;
+		return [...this.state.systemsUndiscovered.keys()].length <= 0;
+	},
+	allWordsLearned: function() {
+		return [...this.state.wordsUnlearned.keys()].length <= 0;
 	},
 	atMaxPower: function() {
 		return this.state.availablePower >= GameConstants.MAX_POWER;
@@ -286,6 +302,24 @@ var Clicker = React.createClass({
 		if (Math.random() < GameConstants.SYSTEM_DISCOVERY_CHANCE) {
 			this.discoverNewSystem();
 		}
+	},
+	attemptToLearnNewWord: function() {
+		if (Math.random() < GameConstants.LEARN_DISCOVERY_CHANCE) {
+			this.learnNewWord();
+		}
+	},
+	translate: function(text) {
+		var words = text.split(" ");
+		for (var i = 0; i < words.length; i++) {
+			if (!this.state.wordsLearned.has(words[i].toLowerCase())) {
+				words = [
+					...words.slice(0, i),
+					SystemScrambler.scramble(words[i]),
+					...words.slice(i + 1),
+				];
+			}
+		}
+		return words.join(" ");
 	},
 	repairSelectedSystems: function() {
 		for (var [systemKey,value] of this.state.systemsSelected) {
@@ -313,7 +347,13 @@ var Clicker = React.createClass({
 			}
 		}
 		else if (this.state.userAction == UserActionConstants.LEARN_SHIP_LANGUAGE) {
-			this.decodeAllSystems();
+			if (this.allWordsLearned()) {
+				this.addLogMessage("The are no words left to learn.");
+				this.setUserAction(UserActionConstants.NOTHING);
+			}
+			else {
+				this.attemptToLearnNewWord();
+			}
 		}
 		else if (this.state.userAction == UserActionConstants.GENERATE_POWER) {
 			if (this.atMaxPower()) {
@@ -335,7 +375,7 @@ var Clicker = React.createClass({
 		}
 		// free translation
 		if (this.state.systemsDiscovered.has(SystemConstants.SYSTEMS.UNIVERSAL_TRANSLATOR) && this.state.systems.get(SystemConstants.SYSTEMS.UNIVERSAL_TRANSLATOR).damage >= 1) {
-			this.decodeAllSystems();
+			this.attemptToLearnNewWord();
 		}
 		// free repairs
 		if (this.state.systemsDiscovered.has(SystemConstants.SYSTEMS.LARGE_SCALE_MANUFACTURING) && this.state.systems.get(SystemConstants.SYSTEMS.LARGE_SCALE_MANUFACTURING).damage >= 1) {
@@ -393,11 +433,11 @@ var Clicker = React.createClass({
 
 	render: function() {
 		return <div>
-			{this.isDebugMode() && <DebugTools addSystem={this.discoverNewSystem} decodeAllSystems={this.decodeAllSystems} setUserAction={this.setUserAction} fullyUnscrambleAllSystems={this.fullyUnscrambleAllSystems} />}
+			{this.isDebugMode() && <DebugTools addSystem={this.discoverNewSystem} setUserAction={this.setUserAction} fullyUnscrambleAllSystems={this.fullyUnscrambleAllSystems} />}
 			{this.state.lightLumens > 0 && <NoPower lumens={this.state.lightLumens} />}
 			{this.state.emergencyLightLumens > 0 && <EmergencyLighting lumens={this.state.emergencyLightLumens} />}
-			<UserPanel userAction={this.state.userAction} setUserAction={this.setUserAction} allSystemsDiscovered={this.allSystemsDiscovered()} timer={this.state.timer} distanceVisible={this.distanceVisible()} distanceToHome={this.state.distanceToHome} availablePower={this.state.availablePower} atMaxPower={this.atMaxPower()} atZeroPower={this.atZeroPower()} pathPlotted={this.state.pathPlotted} logMessages={this.state.logMessages} />
-			<SystemsRenderer noLights={this.noLights()} systemsHighlighted={this.noPower() ? new Map([[SystemConstants.SYSTEMS.EMERGENCY_LIGHTING, true]]) : new Map()} systemsSelected={this.state.systemsSelected} selectSystem={this.selectSystem} deselectSystem={this.deselectSystem}>{this.getSystemsDiscovered()}</SystemsRenderer>
+			<UserPanel userAction={this.state.userAction} setUserAction={this.setUserAction} allSystemsDiscovered={this.allSystemsDiscovered()} allWordsLearned={this.allWordsLearned()} timer={this.state.timer} distanceVisible={this.distanceVisible()} distanceToHome={this.state.distanceToHome} availablePower={this.state.availablePower} atMaxPower={this.atMaxPower()} atZeroPower={this.atZeroPower()} pathPlotted={this.state.pathPlotted} logMessages={this.state.logMessages} />
+			<SystemsRenderer noLights={this.noLights()} systemsHighlighted={this.noPower() ? new Map([[SystemConstants.SYSTEMS.EMERGENCY_LIGHTING, true]]) : new Map()} systemsSelected={this.state.systemsSelected} selectSystem={this.selectSystem} deselectSystem={this.deselectSystem} translate={this.translate}>{this.getSystemsDiscovered()}</SystemsRenderer>
 			{this.isWon() && <WinScreen />}
 		</div>;
 	}
