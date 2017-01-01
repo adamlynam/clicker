@@ -29,10 +29,10 @@ var Clicker = React.createClass({
 			],
 			systems: this.initaliseSystems(),
 			systemsUndiscovered: this.initaliseUndiscoveredSystems(),
-			systemsDiscovered: new Map([
-				[SystemConstants.SYSTEMS.EMERGENCY_LIGHTING, true],
+			systemsDiscovered: new Set([
+				SystemConstants.SYSTEMS.EMERGENCY_LIGHTING,
 			]),
-			systemsSelected: new Map(),
+			systemsSelected: new Set(),
 			wordsUnlearned: this.initaliseWords(),
 			wordsLearned: new Set([
 				" ",
@@ -54,17 +54,17 @@ var Clicker = React.createClass({
 	initaliseSystems: function() {
 		var allSystems = new Map();
 		for (var system of SystemConstants.ALL_SYSTEMS) {
-			var scrambledSystem = Object.assign(Object.assign({}, system), {
+			var damagedSystem = Object.assign(Object.assign({}, system), {
 				damage: Math.floor(Math.random() * 100) / 100,
 			});
-			allSystems.set(scrambledSystem.key, scrambledSystem);
+			allSystems.set(damagedSystem.key, damagedSystem);
 		}
 		return allSystems;
 	},
 	initaliseUndiscoveredSystems: function() {
-		var allSystemNames = new Map();
+		var allSystemNames = new Set();
 		for (var system of SystemConstants.ALL_SYSTEMS) {
-			allSystemNames.set(system.key, true);
+			allSystemNames.add(system.key);
 		}
 		return allSystemNames;
 	},
@@ -94,10 +94,10 @@ var Clicker = React.createClass({
 			var discoveredSystemKey = undiscoveredSystemKeys[Math.floor(Math.random() * undiscoveredSystemKeys.length)];
 
 			this.setState((previousState, currentProps) => {
-				var systemsUndiscovered = new Map(previousState.systemsUndiscovered);
-				var systemsDiscovered = new Map(previousState.systemsDiscovered);
+				var systemsUndiscovered = new Set(previousState.systemsUndiscovered);
+				var systemsDiscovered = new Set(previousState.systemsDiscovered);
 				systemsUndiscovered.delete(discoveredSystemKey);
-				systemsDiscovered.set(discoveredSystemKey, true);
+				systemsDiscovered.add(discoveredSystemKey);
 				return {
 					systemsUndiscovered: systemsUndiscovered,
 					systemsDiscovered: systemsDiscovered,
@@ -255,8 +255,8 @@ var Clicker = React.createClass({
 	selectSystem: function(systemKey) {
 		if (!this.state.systemsSelected.has(systemKey)) {
 			this.setState((previousState, currentProps) => {
-				var systemsSelected = new Map(previousState.systemsSelected);
-				systemsSelected.set(systemKey, true);
+				var systemsSelected = new Set(previousState.systemsSelected);
+				systemsSelected.add(systemKey);
 				return {
 					systemsSelected: systemsSelected,
 				};
@@ -293,7 +293,7 @@ var Clicker = React.createClass({
 	},
 
 	getSystemsDiscovered: function() {
-		return [...this.state.systemsDiscovered.keys()].map(systemKey => {
+		return [...this.state.systemsDiscovered].map(systemKey => {
 			return this.state.systems.get(systemKey);
 		});
 	},
@@ -333,7 +333,7 @@ var Clicker = React.createClass({
 		return words.join(" ");
 	},
 	repairSelectedSystems: function() {
-		for (var [systemKey,value] of this.state.systemsSelected) {
+		for (var systemKey of this.state.systemsSelected) {
 			this.repairSystem(systemKey, UserActionConstants.REPAIR_PER_TICK);
 		}
 	},
@@ -448,7 +448,7 @@ var Clicker = React.createClass({
 			{this.state.lightLumens > 0 && <NoPower lumens={this.state.lightLumens} />}
 			{this.state.emergencyLightLumens > 0 && <EmergencyLighting lumens={this.state.emergencyLightLumens} />}
 			<UserPanel userAction={this.state.userAction} setUserAction={this.setUserAction} allSystemsDiscovered={this.allSystemsDiscovered()} allWordsLearned={this.allWordsLearned()} timer={this.state.timer} distanceVisible={this.distanceVisible()} distanceToHome={this.state.distanceToHome} availablePower={this.state.availablePower} atMaxPower={this.atMaxPower()} atZeroPower={this.atZeroPower()} pathPlotted={this.state.pathPlotted} logMessages={this.state.logMessages} />
-			<SystemsRenderer noLights={this.noLights()} systemsHighlighted={this.noPower() ? new Map([[SystemConstants.SYSTEMS.EMERGENCY_LIGHTING, true]]) : new Map()} systemsSelected={this.state.systemsSelected} selectSystem={this.selectSystem} deselectSystem={this.deselectSystem} translate={this.translate}>{this.getSystemsDiscovered()}</SystemsRenderer>
+			<SystemsRenderer noLights={this.noLights()} systemsHighlighted={this.noPower() ? new Set([SystemConstants.SYSTEMS.EMERGENCY_LIGHTING]) : new Set()} systemsSelected={this.state.systemsSelected} selectSystem={this.selectSystem} deselectSystem={this.deselectSystem} translate={this.translate}>{this.getSystemsDiscovered()}</SystemsRenderer>
 			{this.isWon() && <WinScreen />}
 		</div>;
 	}
