@@ -266,7 +266,7 @@ var Clicker = React.createClass({
 	deselectSystem: function(systemKey) {
 		if (this.state.systemsSelected.has(systemKey)) {
 			this.setState((previousState, currentProps) => {
-				var systemsSelected = new Map(previousState.systemsSelected);
+				var systemsSelected = new Set(previousState.systemsSelected);
 				systemsSelected.delete(systemKey);
 				return {
 					systemsSelected: systemsSelected,
