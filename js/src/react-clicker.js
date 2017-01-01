@@ -34,9 +34,10 @@ var Clicker = React.createClass({
 			]),
 			systemsSelected: new Map(),
 			wordsUnlearned: this.initaliseWords(),
-			wordsLearned: new Map([
-				[" ", true],
+			wordsLearned: new Set([
+				" ",
 			]),
+			wordsScrambled: this.initaliseScrambledWords(),
 			lastKey: 1,
 			gameTimerInterval: gameTimerInterval,
 			userAction: UserActionConstants.NOTHING,
@@ -67,15 +68,25 @@ var Clicker = React.createClass({
 		}
 		return allSystemNames;
 	},
-	initaliseWords: function() {
-		var allWords = new Map();
+	getAllWords: function() {
+		var allWords = new Set();
 		for (var system of SystemConstants.ALL_SYSTEMS) {
 			var words = system.key.split(" ");
 			for (var word of words) {
-				allWords.set(word.toLowerCase(), true);
+				allWords.add(word.toLowerCase());
 			}
 		}
 		return allWords;
+	},
+	initaliseWords: function() {
+		return this.getAllWords();
+	},
+	initaliseScrambledWords: function() {
+		var scrambledWords = new Map();
+		for (var word of this.getAllWords()) {
+			scrambledWords.set(word, SystemScrambler.scramble(word));
+		}
+		return scrambledWords;
 	},
 	discoverNewSystem: function() {
 		var undiscoveredSystemKeys = [...this.state.systemsUndiscovered.keys()];
@@ -101,10 +112,10 @@ var Clicker = React.createClass({
 			var discoveredWord = wordsUnlearned[Math.floor(Math.random() * wordsUnlearned.length)];
 
 			this.setState((previousState, currentProps) => {
-				var wordsUnlearned = new Map(previousState.wordsUnlearned);
-				var wordsLearned = new Map(previousState.wordsLearned);
+				var wordsUnlearned = new Set(previousState.wordsUnlearned);
+				var wordsLearned = new Set(previousState.wordsLearned);
 				wordsUnlearned.delete(discoveredWord);
-				wordsLearned.set(discoveredWord, true);
+				wordsLearned.add(discoveredWord);
 				return {
 					wordsUnlearned: wordsUnlearned,
 					wordsLearned: wordsLearned,
@@ -314,7 +325,7 @@ var Clicker = React.createClass({
 			if (!this.state.wordsLearned.has(words[i].toLowerCase())) {
 				words = [
 					...words.slice(0, i),
-					SystemScrambler.scramble(words[i]),
+					this.state.wordsScrambled.get(words[i].toLowerCase()),
 					...words.slice(i + 1),
 				];
 			}
