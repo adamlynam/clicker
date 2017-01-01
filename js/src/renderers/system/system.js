@@ -24,7 +24,6 @@ module.exports = React.createClass({
 			position: 'relative',
 			float: 'left',
 			width: '200px',
-			margin: '5px',
 			backgroundImage: 'url(img/broken_tiling_circuits.png)',
 			border: isRepaired ? (this.props.isSelected ? '3px solid #dddd33' : '3px solid #ff0000') : '3px solid #33dd33',
 			cursor: 'pointer',
