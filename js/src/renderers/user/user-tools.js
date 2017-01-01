@@ -53,6 +53,9 @@ module.exports = React.createClass({
                 <input name="current-action" type="radio" onChange={this.setUserActionToGeneratePower} checked={this.props.userAction == UserActionContants.GENERATE_POWER ? true : null} disabled={this.props.atMaxPower} readOnly={this.props.atMaxPower} />
                 <span>Generate Power</span>
             </label>
+            {this.props.fltJumpReady && <label style={userOptionCss} onClick={this.props.performFtlJump}>
+                <span>Initiate FTL Jump</span>
+            </label>}
 		</div>;
 	}
 });

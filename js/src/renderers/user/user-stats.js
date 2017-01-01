@@ -8,13 +8,13 @@ module.exports = React.createClass({
 		var statsCss = {
 			clear: 'both',
 		};
-		var chargeBarCss = {
+		var powerBarCss = {
 			width: '200px',
 			height: '2em',
 			margin: '5px',
 			backgroundImage: 'url(img/empty_tiling_power.png)',
 		};
-		var chargeCss = {
+		var powerCss = {
 			width: (this.props.availablePower / GameConstants.MAX_POWER * 100) + '%',
 			height: '100%',
 			backgroundImage: 'url(img/tiling_power.png)',
@@ -30,15 +30,29 @@ module.exports = React.createClass({
 			height: '100%',
 			backgroundImage: 'url(img/tiling_starpath.png)',
 		}
+		var ftlBarCss = {
+			width: '200px',
+			height: '2em',
+			margin: '5px',
+			backgroundImage: 'url(img/empty_tiling_atoms.png)',
+		};
+		var fltCss = {
+			width: (this.props.ftlCharge / GameConstants.MAX_FTL_TO_CHARGE * 100) + '%',
+			height: '100%',
+			backgroundImage: 'url(img/tiling_atoms.png)',
+		}
 		return <div style={statsCss}>
 			<h2>Resources</h2>
 			<p>{this.props.timer} turns passed</p>
 			{this.props.distanceVisible && <p>{this.props.distanceToHome} lightyears to home</p>}
-            <div style={chargeBarCss}>
-				<div style={chargeCss} />
+            <div style={powerBarCss}>
+				<div style={powerCss} />
 			</div>
 			{this.props.pathPlotted > 0 && <div style={pathBarCss}>
 				<div style={pathCss} />
+			</div>}
+			{this.props.ftlCharge > 0 && <div style={ftlBarCss}>
+				<div style={fltCss} />
 			</div>}
 		</div>;
 	}

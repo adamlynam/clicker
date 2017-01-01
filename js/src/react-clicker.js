@@ -45,6 +45,7 @@ var Clicker = React.createClass({
 			distanceToHome: Math.floor(Math.random() * GameConstants.MAX_DISTANCE_TO_HOME),
 			availablePower: 0,
 			pathPlotted: 0,
+			ftlCharge: 0,
 			lightsOn: false,
 			lightLumens: 1,
 			emergencyLightsOn: false,
@@ -215,17 +216,46 @@ var Clicker = React.createClass({
 		}
 	},
 	addPath: function(path) {
+		if (this.state.pathPlotted < 100 && this.state.pathPlotted % 25 == 0) {
+			this.addLogMessage("FTL Travel Path " + this.state.pathPlotted + "% calculated.");
+		}
+		else if (this.state.pathPlotted == 99) {
+			this.addLogMessage("FTL Travel Path fully calculated.");
+		}
 		this.setState((previousState, currentProps) => {
-			if (previousState.pathPlotted < 100 && previousState.pathPlotted % 25 == 0) {
-				this.addLogMessage("FTL Travel Path " + previousState.pathPlotted + "% calculated.");
-			}
-			else if (previousState.pathPlotted == 99) {
-				this.addLogMessage("FTL Travel Path fully calculated.");
-			}
 			return {
 				pathPlotted: Math.min(GameConstants.MAX_PATH_TO_PLOT, previousState.pathPlotted + path),
 			};
 		});
+	},
+	addFtlCharge: function(charge) {
+		if (this.state.ftlCharge < 100 && this.state.ftlCharge % 25 == 0) {
+			this.addLogMessage("FTL Drive " + this.state.ftlCharge + "% charged.");
+		}
+		else if (this.state.ftlCharge == 99) {
+			this.addLogMessage("FTL Drive fully charged.");
+		}
+		this.setState((previousState, currentProps) => {
+			return {
+				ftlCharge: Math.min(GameConstants.MAX_FTL_TO_CHARGE, previousState.ftlCharge + charge),
+			};
+		});
+	},
+	performFtlJump: function() {
+		if (this.state.distanceToHome > GameConstants.FTL_JUMP_BUFFER_DISTANCE) {
+			var distanceToJump = Math.floor(Math.random() * (this.state.distanceToHome - GameConstants.FTL_JUMP_BUFFER_DISTANCE));
+			this.setState((previousState, currentProps) => {
+				return {
+					distanceToHome: Math.max(0, previousState.distanceToHome - distanceToJump),
+					pathPlotted: 1,
+					ftlCharge: 1,
+				};
+			});
+			this.addLogMessage("FTL Jump complete, travelled " + distanceToJump + " light years.");
+		}
+		else {
+			this.addLogMessage("Not safe to perform FTL Jump, too close to destination.");
+		}
 	},
 	repairSystem: function(systemKey, repairAmount) {
 		if (this.state.availablePower > 0) {
@@ -302,6 +332,9 @@ var Clicker = React.createClass({
 	},
 	allWordsLearned: function() {
 		return [...this.state.wordsUnlearned.keys()].length <= 0;
+	},
+	ftlJumpReady: function() {
+		return this.state.systems.get(SystemConstants.SYSTEMS.FTL_DRIVE).damage >= 1 && this.state.pathPlotted >= GameConstants.MAX_PATH_TO_PLOT && this.state.ftlCharge >= GameConstants.MAX_FTL_TO_CHARGE;
 	},
 	atMaxPower: function() {
 		return this.state.availablePower >= GameConstants.MAX_POWER;
@@ -399,15 +432,16 @@ var Clicker = React.createClass({
 		if (this.state.systems.get(SystemConstants.SYSTEMS.LONG_RANGE_SCANNERS).damage >= 1 && this.state.systems.get(SystemConstants.SYSTEMS.FTL_COMPUTER).damage >= 1) {
 			this.addPath(1);
 		}
-		// travel home
-		if (this.state.systems.get(SystemConstants.SYSTEMS.FTL_DRIVE).damage >= 1 && this.state.pathPlotted >= GameConstants.MAX_PATH_TO_PLOT) {
-			this.addDistance(-10000);
+		// charge FTL drive
+		if (this.state.systems.get(SystemConstants.SYSTEMS.FTL_DRIVE).damage >= 1) {
+			this.addFtlCharge(1);
 		}
+		// travel home
 		if (this.state.systems.get(SystemConstants.SYSTEMS.MAIN_THRUSTERS).damage >= 1 && this.state.systems.get(SystemConstants.SYSTEMS.FUEL_REGULATION).damage >= 1 && this.state.systems.get(SystemConstants.SYSTEMS.HELM).damage >= 1) {
-			this.addDistance(-100);
+			this.addDistance(-GameConstants.MAIN_THRUSTERS_DISTANCE);
 		}
 		if (this.state.systems.get(SystemConstants.SYSTEMS.MANUVERING_THRUSTERS).damage >= 1 && this.state.systems.get(SystemConstants.SYSTEMS.FUEL_REGULATION).damage >= 1 && this.state.systems.get(SystemConstants.SYSTEMS.HELM).damage >= 1) {
-			this.addDistance(-1);
+			this.addDistance(-GameConstants.MANUVERING_THRUSTERS_DISTANCE);
 		}
 		// lights
 		if (!this.noPower() && !this.state.lightsOn) {
@@ -447,7 +481,7 @@ var Clicker = React.createClass({
 			{this.isDebugMode() && <DebugTools addSystem={this.discoverNewSystem} setUserAction={this.setUserAction} fullyUnscrambleAllSystems={this.fullyUnscrambleAllSystems} />}
 			{this.state.lightLumens > 0 && <NoPower lumens={this.state.lightLumens} />}
 			{this.state.emergencyLightLumens > 0 && <EmergencyLighting lumens={this.state.emergencyLightLumens} />}
-			<UserPanel userAction={this.state.userAction} setUserAction={this.setUserAction} allSystemsDiscovered={this.allSystemsDiscovered()} allWordsLearned={this.allWordsLearned()} timer={this.state.timer} distanceVisible={this.distanceVisible()} distanceToHome={this.state.distanceToHome} availablePower={this.state.availablePower} atMaxPower={this.atMaxPower()} atZeroPower={this.atZeroPower()} pathPlotted={this.state.pathPlotted} logMessages={this.state.logMessages} />
+			<UserPanel userAction={this.state.userAction} setUserAction={this.setUserAction} allSystemsDiscovered={this.allSystemsDiscovered()} allWordsLearned={this.allWordsLearned()} fltJumpReady={this.ftlJumpReady()} performFtlJump={this.performFtlJump} timer={this.state.timer} distanceVisible={this.distanceVisible()} distanceToHome={this.state.distanceToHome} availablePower={this.state.availablePower} atMaxPower={this.atMaxPower()} atZeroPower={this.atZeroPower()} pathPlotted={this.state.pathPlotted} ftlCharge={this.state.ftlCharge} logMessages={this.state.logMessages} />
 			<SystemsRenderer noLights={this.noLights()} systemsHighlighted={this.noPower() ? new Set([SystemConstants.SYSTEMS.EMERGENCY_LIGHTING]) : new Set()} systemsSelected={this.state.systemsSelected} selectSystem={this.selectSystem} deselectSystem={this.deselectSystem} translate={this.translate}>{this.getSystemsDiscovered()}</SystemsRenderer>
 			{this.isWon() && <WinScreen />}
 		</div>;
