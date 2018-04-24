@@ -1,18 +1,17 @@
-var React = require('react');
-var ReactDOM = require('react-dom');
+import React, { Component } from 'react';
 
-var SystemName = require('./system-name');
+import SystemName from './system-name';
 
-module.exports = React.createClass({
-	toggleSelected: function(object) {
+class System extends Component {
+	toggleSelected = (object) => {
 		if (this.props.isSelected) {
 			this.props.deselectSystem(this.props.children.key);
 		} else {
 			this.props.selectSystem(this.props.children.key);
 		}
-	},
+	}
 
-	render: function() {
+	render = () => {
 		var isRepaired = this.props.children.damage < 1;
 		var highlightSystemCss = {
 			opacity: '0.2',
@@ -43,4 +42,6 @@ module.exports = React.createClass({
 			<SystemName translate={this.props.translate}>{this.props.children}</SystemName>
 		</div>;
 	}
-});
+}
+
+export default System;

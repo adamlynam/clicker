@@ -1,26 +1,29 @@
-var React = require('react');
-var ReactDOM = require('react-dom');
+import React, { Component } from 'react';
 
 var UserActionContants = require('../../actions/user-actions-constants');
 
-module.exports = React.createClass({
-    setUserActionToNothing: function(object) {
-        this.props.setUserAction(UserActionContants.NOTHING);
-    },
-    setUserActionToDiscoverSystems: function(object) {
-        this.props.setUserAction(UserActionContants.DISCOVER_SYSTEMS);
-    },
-    setUserActionToRepairSystems: function(object) {
-        this.props.setUserAction(UserActionContants.REPAIR_SYSTEMS);
-    },
-    setUserActionToLearnShipLanguage: function(object) {
-        this.props.setUserAction(UserActionContants.LEARN_SHIP_LANGUAGE);
-    },
-    setUserActionToGeneratePower:  function(object) {
-        this.props.setUserAction(UserActionContants.GENERATE_POWER);
-    },
+class UserTools extends Component {
+  setUserActionToNothing = (object) => {
+      this.props.setUserAction(UserActionContants.NOTHING);
+  }
 
-	render: function() {
+  setUserActionToDiscoverSystems = (object) => {
+      this.props.setUserAction(UserActionContants.DISCOVER_SYSTEMS);
+  }
+
+  setUserActionToRepairSystems = (object) => {
+      this.props.setUserAction(UserActionContants.REPAIR_SYSTEMS);
+  }
+
+  setUserActionToLearnShipLanguage = (object) => {
+      this.props.setUserAction(UserActionContants.LEARN_SHIP_LANGUAGE);
+  }
+
+  setUserActionToGeneratePower = (object) => {
+      this.props.setUserAction(UserActionContants.GENERATE_POWER);
+  }
+
+	render = () => {
         var userOptionCss = {
 			position: 'relative',
 			float: 'left',
@@ -58,4 +61,6 @@ module.exports = React.createClass({
             </label>}
 		</div>;
 	}
-});
+}
+
+export default UserTools;

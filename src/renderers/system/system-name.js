@@ -1,8 +1,7 @@
-var React = require('react');
-var ReactDOM = require('react-dom');
+import React, { Component } from 'react';
 
-module.exports = React.createClass({
-	render: function() {
+class SystemName extends Component {
+	render = () => {
 		var nameCss = {
 			display: 'inline',
 			position: 'absolute',
@@ -18,4 +17,6 @@ module.exports = React.createClass({
 			return <span key={index} style={letterCss} >{letter}</span>;
 		})}</p>;
 	}
-});
+}
+
+export default SystemName;

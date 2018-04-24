@@ -1,17 +1,17 @@
-var React = require('react');
-var ReactDOM = require('react-dom');
+import React, { Component } from 'react';
 
-var SystemRenderer = require('./system');
+import SystemRenderer from './system';
 
-module.exports = React.createClass({
-	isHighlighted(systemKey) {
+class Systems extends Component {
+	isHighlighted = (systemKey) => {
 		return this.props.systemsHighlighted.has(systemKey);
-	},
-	isSelected(systemKey) {
-		return this.props.systemsSelected.has(systemKey);
-	},
+	}
 
-	render: function() {
+	isSelected = (systemKey) => {
+		return this.props.systemsSelected.has(systemKey);
+	}
+
+	render = () => {
 		var systemsCss = {
 			float: 'left',
 			width: '50%',
@@ -20,4 +20,6 @@ module.exports = React.createClass({
 		    return <SystemRenderer noLights={this.props.noLights} isHighlighted={this.isHighlighted(system.key)} isSelected={this.isSelected(system.key)} selectSystem={this.props.selectSystem} deselectSystem={this.props.deselectSystem} translate={this.props.translate} key={system.key}>{system}</SystemRenderer>
 		})}</div>
 	}
-});
+}
+
+export default Systems;

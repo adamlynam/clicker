@@ -1,14 +1,15 @@
-var React = require('react');
-var ReactDOM = require('react-dom');
+import React, { Component } from 'react';
+import ReactDOM from 'react-dom';
 
 var SystemConstants = require('../../systems/system-constants');
 
-module.exports = React.createClass({
-	componentDidUpdate: function() {
+class UserLog extends Component {
+	componentDidUpdate = () => {
 		var logText = ReactDOM.findDOMNode(this.refs.logText);;
 		logText.scrollTop = logText.scrollHeight;
-	},
-	render: function() {
+	}
+
+	render = () => {
 		var logCss = {
             position: 'fixed',
             bottom: 0,
@@ -34,4 +35,6 @@ module.exports = React.createClass({
             </div>
 		</div>;
 	}
-});
+}
+
+export default UserLog;

@@ -1,10 +1,9 @@
-var React = require('react');
-var ReactDOM = require('react-dom');
+import React, { Component } from 'react';
 
 var GameConstants = require('../../game-constants');
 
-module.exports = React.createClass({
-	render: function() {
+class UserStats extends Component {
+	render = () => {
 		var statsCss = {
 			clear: 'both',
 		};
@@ -56,4 +55,6 @@ module.exports = React.createClass({
 			</div>}
 		</div>;
 	}
-});
+}
+
+export default UserStats;

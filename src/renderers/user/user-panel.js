@@ -1,13 +1,12 @@
-var React = require('react');
-var ReactDOM = require('react-dom');
+import React, { Component } from 'react';
 
-var UserTools = require('./user-tools');
-var UserStats = require('./user-stats');
-var UserLog = require('./user-log');
+import UserTools from './user-tools';
+import UserStats from './user-stats';
+import UserLog from './user-log';
 
-module.exports = React.createClass({
+class UserPanel extends Component {
 
-	render: function() {
+	render = () => {
         var userPanelCss = {
 			float: 'left',
             width: '50%',
@@ -18,4 +17,6 @@ module.exports = React.createClass({
 			<UserLog>{this.props.logMessages}</UserLog>
 		</div>;
 	}
-});
+}
+
+export default UserPanel;

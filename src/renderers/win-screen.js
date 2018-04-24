@@ -1,8 +1,7 @@
-var React = require('react');
-var ReactDOM = require('react-dom');
+import React, { Component } from 'react';
 
-module.exports = React.createClass({
-	render: function() {
+class WinScreen extends Component {
+	render = () => {
 		var winGreyOutCss = {
             position: 'fixed',
             top: '0%',
@@ -27,4 +26,6 @@ module.exports = React.createClass({
               <div style={winDialogCss}>Congratulations you made it home!</div>
   		</div>;
 	}
-});
+}
+
+export default WinScreen;

@@ -1,10 +1,9 @@
-var React = require('react');
-var ReactDOM = require('react-dom');
+import React, { Component } from 'react';
 
 var MAX_OPACITY = 0.7;
 
-module.exports = React.createClass({
-	render: function() {
+class EmergencyLighting extends Component {
+	render = () => {
 		var fullScreenCss = {
             position: 'fixed',
             top: '0%',
@@ -18,4 +17,6 @@ module.exports = React.createClass({
 		return <div style={fullScreenCss}>
   		</div>;
 	}
-});
+}
+
+export default EmergencyLighting;
