@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 
-var MAX_OPACITY = 0.7;
+var MAX_OPACITY = 0.3;
 
 class EmergencyLighting extends Component {
 	render = () => {

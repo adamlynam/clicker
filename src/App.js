@@ -11,6 +11,7 @@ import UserActionConstants from './actions/user-actions-constants';
 import UserPanel from './renderers/user/user-panel';
 import SystemsRenderer from './renderers/system/systems';
 
+import SpaceWindow from './renderers/space-window';
 import NoPower from './renderers/no-power';
 import EmergencyLighting from './renderers/emergency-lighting';
 import WinScreen from './renderers/win-screen';
@@ -451,6 +452,14 @@ class App extends Component {
 		}
 	}
 
+  mainThrustersActive = () => {
+    return this.state.systems.get(SystemConstants.SYSTEMS.MAIN_THRUSTERS).damage >= 1 && this.state.systems.get(SystemConstants.SYSTEMS.FUEL_REGULATION).damage >= 1 && this.state.systems.get(SystemConstants.SYSTEMS.HELM).damage >= 1;
+  }
+
+  manuveringThrustersActive = () => {
+    return this.state.systems.get(SystemConstants.SYSTEMS.MANUVERING_THRUSTERS).damage >= 1 && this.state.systems.get(SystemConstants.SYSTEMS.FUEL_REGULATION).damage >= 1 && this.state.systems.get(SystemConstants.SYSTEMS.HELM).damage >= 1;
+  }
+
 	tickSystemAction = () => {
 		// free power
 		if (this.state.systemsDiscovered.has(SystemConstants.SYSTEMS.MAIN_POWER) && this.state.systems.get(SystemConstants.SYSTEMS.MAIN_POWER).damage >= 1) {
@@ -479,10 +488,10 @@ class App extends Component {
 			this.addFtlCharge(1);
 		}
 		// travel home
-		if (this.state.systems.get(SystemConstants.SYSTEMS.MAIN_THRUSTERS).damage >= 1 && this.state.systems.get(SystemConstants.SYSTEMS.FUEL_REGULATION).damage >= 1 && this.state.systems.get(SystemConstants.SYSTEMS.HELM).damage >= 1) {
+		if (this.mainThrustersActive()) {
 			this.addDistance(-GameConstants.MAIN_THRUSTERS_DISTANCE);
 		}
-		if (this.state.systems.get(SystemConstants.SYSTEMS.MANUVERING_THRUSTERS).damage >= 1 && this.state.systems.get(SystemConstants.SYSTEMS.FUEL_REGULATION).damage >= 1 && this.state.systems.get(SystemConstants.SYSTEMS.HELM).damage >= 1) {
+		if (this.manuveringThrustersActive()) {
 			this.addDistance(-GameConstants.MANUVERING_THRUSTERS_DISTANCE);
 		}
 		// lights
@@ -525,7 +534,8 @@ class App extends Component {
 	}
 
 	render = () => {
-		return <div>
+		return <div style={{position: 'fixed', height: '100%', backgroundColor: '#333333'}} >
+      <SpaceWindow mainThrustersActive={this.mainThrustersActive()} manuveringThrustersActive={this.manuveringThrustersActive()} />
 			{this.isDebugMode() && <DebugTools addSystem={this.discoverNewSystem} setUserAction={this.setUserAction} fullyUnscrambleAllSystems={this.fullyUnscrambleAllSystems} />}
 			{this.state.lightLumens > 0 && <NoPower lumens={this.state.lightLumens} />}
 			{this.state.emergencyLightLumens > 0 && <EmergencyLighting lumens={this.state.emergencyLightLumens} />}
